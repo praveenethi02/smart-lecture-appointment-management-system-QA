@@ -20,7 +20,7 @@ The system was selected under **Option A (reuse an existing project)** because i
 1. Verify that every in-scope feature behaves according to its business rules (slot duration, overlap, past-date, double-booking and cancellation-deadline rules).
 2. Confirm that role-based access control prevents users from performing actions outside their role.
 3. Detect and log defects, and perform root cause analysis on the most significant ones.
-4. Automate regression tests and run them on every push and pull request through a CI pipeline.
+4. Automate regression tests and run them on every pull request and push to `main` through a CI pipeline.
 5. Measure code quality (coverage, bugs, vulnerabilities, code smells, technical debt) with SonarCloud and propose improvements.
 6. Assess basic performance under concurrent load and check selected OWASP Top 10 risks.
 
@@ -60,7 +60,7 @@ The system was selected under **Option A (reuse an existing project)** because i
 | Performance testing | Concurrent users on a public endpoint | Apache JMeter | Member 4 |
 | Security testing | Selected OWASP Top 10 checks, `npm audit` | Postman, npm | Member 4 |
 | Static analysis | Bugs, vulnerabilities, code smells, coverage, debt | SonarCloud | Member 3 |
-| Continuous integration | All automated tests on every push/PR | GitHub Actions | Member 3 |
+| Continuous integration | All automated tests on every PR and push to `main` | GitHub Actions | Member 3 |
 
 ## 3.1.5 Resources
 
@@ -90,7 +90,7 @@ The system was selected under **Option A (reuse an existing project)** because i
 
 **Entry criteria**
 - Source code available in the GitHub repository and the application runs locally.
-- Test environment set up (Node.js 22, MongoDB/in-memory DB, seeded demo accounts).
+- Test environment set up (Node.js 22 or later, MongoDB/in-memory DB, seeded demo accounts).
 - Requirements and business rules documented; test plan reviewed by the team.
 
 **Exit criteria**

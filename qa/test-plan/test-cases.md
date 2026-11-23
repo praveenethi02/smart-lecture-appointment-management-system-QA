@@ -8,7 +8,7 @@
 | 2. Test planning | Defined objectives, scope, approach, tools, roles, schedule, entry/exit criteria and risks; selected ISO/IEC 25010 characteristics | Test Plan (Section 3.1, `qa/test-plan/test-plan.md`) |
 | 3. Test case design | Wrote manual test cases; designed EP, BVA and decision-table cases; built the control flow graph for white-box tests; wrote Gherkin scenarios | Test case table (below), Sections 3.3–3.5 |
 | 4. Test environment setup | Configured Node.js 26.5.0 (local), in-memory MongoDB with seeded demo accounts, local `.env`; set up GitHub Actions (`ubuntu-latest`) and SonarCloud | Environment table (3.2.2), CI workflow `.github/workflows/test.yml` |
-| 5. Test execution | Executed manual test cases in Chrome; ran Jest, Supertest and Cucumber in CI; ran Postman/Newman, JMeter and OWASP checks; logged defects in GitHub Issues | Actual results and status, CI runs, GitHub Issues BUG-01 to BUG-07 |
+| 5. Test execution | Executed the designed test cases through scripted API requests and scripted Chrome UI runs (AI-assisted, see `execution-log.md`); ran Jest, Supertest and Cucumber in CI; ran Postman/Newman, JMeter and OWASP checks; logged defects in GitHub Issues | Actual results and status, CI runs, GitHub Issues BUG-01 to BUG-07 |
 | 6. Test closure | Collected metrics (pass/fail counts, SonarCloud coverage and debt), performed root cause analysis, wrote reflection and final report | Sections 3.8–3.10, final report |
 
 ## 3.2.2 Test Environment / Configuration
@@ -16,7 +16,7 @@
 | Item | Configuration |
 |---|---|
 | Operating system | Windows 10 / 11 (64-bit) |
-| Browser | Google Chrome (latest stable) |
+| Browser | Google Chrome (headless, for UI runs and screenshots) |
 | Runtime | Node.js 26.5.0 (local execution), npm |
 | Backend | Express REST API on `http://localhost:5000` |
 | Frontend | React 18 + Vite dev server on `http://localhost:5173` |
