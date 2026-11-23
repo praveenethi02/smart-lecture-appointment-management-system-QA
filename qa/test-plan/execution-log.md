@@ -557,4 +557,4 @@ Performed after the API run, on the resulting data.
 
 ## Screenshot run (Chrome UI)
 
-On 2026-11-24 at about 02:43 (Asia/Colombo), the backend was restarted with fresh seed data and the UI steps were repeated by a script driving headless Chrome; the images are in `screenshots/` (ENV-01 and ENV-02 were captured manually). The results matched the API run (TC-RBAC-02, TC-RBAC-03 and TC-BOOK-03 were not repeated in this run). In the UI, TC-AUTH-04 is blocked by client-side validation with the text "Password must be at least 6 characters".
+On 2026-11-24 at about 02:43 (Asia/Colombo), the backend was restarted with fresh seed data and the UI steps were repeated by a script driving headless Chrome; the images are in `screenshots/` (ENV-01 was captured manually). The results matched the API run (TC-RBAC-02, TC-RBAC-03 and TC-BOOK-03 were not repeated in this run). In the UI, TC-AUTH-04 is blocked by client-side validation with the text "Password must be at least 6 characters".
