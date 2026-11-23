@@ -553,4 +553,8 @@ Performed after the API run, on the resulting data.
 ## Observations
 
 1. **BUG-06 (#8):** in TC-BOOK-02 the direct API call returned 400, but the slot changed to `booked` with `currentAppointmentId: null` and was no longer offered to students.
-2. TC-SLOT-04: rejection is correct, but the message does not mention the 480-minute maximum.
+2. **BUG-07 (#9):** in TC-SLOT-04 the rejection is correct, but the message does not mention the 480-minute maximum.
+
+## Screenshot run (Chrome UI)
+
+On 2026-11-24 at about 02:43 (Asia/Colombo), the backend was restarted with fresh seed data and the UI steps were repeated by a script driving headless Chrome; the images are in `screenshots/`. The results matched the API run (TC-RBAC-02, TC-RBAC-03 and TC-BOOK-03 were not repeated in this run). In the UI, TC-AUTH-04 is blocked by client-side validation with the text "Password must be at least 6 characters".

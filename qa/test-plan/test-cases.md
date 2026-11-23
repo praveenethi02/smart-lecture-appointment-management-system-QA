@@ -7,8 +7,8 @@
 | 1. Requirement analysis | Studied the system's features and business rules (slot duration 5–480 min, no past/overlapping slots, double-booking 409, 2-hour cancellation deadline, role permissions) and identified testable requirements | List of in-scope features and business rules |
 | 2. Test planning | Defined objectives, scope, approach, tools, roles, schedule, entry/exit criteria and risks; selected ISO/IEC 25010 characteristics | Test Plan (Section 3.1, `qa/test-plan/test-plan.md`) |
 | 3. Test case design | Wrote manual test cases; designed EP, BVA and decision-table cases; built the control flow graph for white-box tests; wrote Gherkin scenarios | Test case table (below), Sections 3.3–3.5 |
-| 4. Test environment setup | Configured Node.js 22, in-memory MongoDB with seeded demo accounts, local `.env`; set up GitHub Actions (`ubuntu-latest`) and SonarCloud | Environment table (3.2.2), CI workflow `.github/workflows/test.yml` |
-| 5. Test execution | Executed manual test cases in Chrome; ran Jest, Supertest and Cucumber in CI; ran Postman/Newman, JMeter and OWASP checks; logged defects in GitHub Issues | Actual results and status, CI runs, GitHub Issues BUG-01 to BUG-05 |
+| 4. Test environment setup | Configured Node.js 26.5.0 (local), in-memory MongoDB with seeded demo accounts, local `.env`; set up GitHub Actions (`ubuntu-latest`) and SonarCloud | Environment table (3.2.2), CI workflow `.github/workflows/test.yml` |
+| 5. Test execution | Executed manual test cases in Chrome; ran Jest, Supertest and Cucumber in CI; ran Postman/Newman, JMeter and OWASP checks; logged defects in GitHub Issues | Actual results and status, CI runs, GitHub Issues BUG-01 to BUG-07 |
 | 6. Test closure | Collected metrics (pass/fail counts, SonarCloud coverage and debt), performed root cause analysis, wrote reflection and final report | Sections 3.8–3.10, final report |
 
 ## 3.2.2 Test Environment / Configuration
@@ -17,7 +17,7 @@
 |---|---|
 | Operating system | Windows 10 / 11 (64-bit) |
 | Browser | Google Chrome (latest stable) |
-| Runtime | Node.js 22.x, npm |
+| Runtime | Node.js 26.5.0 (local execution), npm |
 | Backend | Express REST API on `http://localhost:5000` |
 | Frontend | React 18 + Vite dev server on `http://localhost:5173` |
 | Database | MongoDB in-memory server (automatic fallback), re-seeded on every backend start |
@@ -52,7 +52,7 @@ Status legend: **Pass** = actual result matches expected result; **Fail** = it d
 | TC-SLOT-01 | Create a valid 60-minute slot | Logged in as lecturer (dr.kamal) | 1. Open `/lecturer/availability`<br>2. Click **Create Availability Slot**<br>3. Fill the form, choose In-Person<br>4. Click **Publish Slot** | Date 2026-12-15, 10:00–11:00, Location "Room 101" | Slot created (HTTP 201); modal closes and the slot appears in the list | 201 "Availability slot created successfully"; slot returned in the lecturer slot list (verified via API) | Pass |
 | TC-SLOT-02 | Create a slot with 4-minute duration (BVA: min−1) | Logged in as lecturer | Same steps as TC-SLOT-01 with the given times | Date 2026-12-15, 12:00–12:04, Room 101 | Rejected (HTTP 400); red error box in the modal about invalid duration (5–480 minutes) | 400 "End time must be after start time, and slot duration must be at least 5 minutes" (verified via API) | Pass |
 | TC-SLOT-03 | Create a slot with 5-minute duration (BVA: min) | Logged in as lecturer | Same steps as TC-SLOT-01 with the given times | Date 2026-12-15, 12:30–12:35, Room 101 | Slot created and shown in the list | 201 "Availability slot created successfully"; slot returned in the lecturer slot list (verified via API) | Pass |
-| TC-SLOT-04 | Create a slot with 481-minute duration (BVA: max+1) | Logged in as lecturer | Same steps as TC-SLOT-01 with the given times | Date 2026-12-16, 08:00–16:01, Room 101 | Rejected (HTTP 400); red error box about invalid duration | 400 "End time must be after start time, and slot duration must be at least 5 minutes"; rejected as expected, but the message does not mention the 480-minute maximum (verified via API) | Pass |
+| TC-SLOT-04 | Create a slot with 481-minute duration (BVA: max+1) | Logged in as lecturer | Same steps as TC-SLOT-01 with the given times | Date 2026-12-16, 08:00–16:01, Room 101 | Rejected (HTTP 400); red error box about invalid duration | 400 "End time must be after start time, and slot duration must be at least 5 minutes"; rejected as expected, but the message does not mention the 480-minute maximum (BUG-07 #9) (verified via API) | Pass |
 | TC-SLOT-05 | Create a slot on a past date | Logged in as lecturer | Same steps as TC-SLOT-01 with a past date | Date 2026-11-20, 10:00–11:00, Room 101 | Rejected (HTTP 400); red error box saying the slot cannot be in the past | 400 "Cannot create availability slots for past dates or times" (verified via API) | Pass |
 | TC-SLOT-06 | Create a slot that overlaps an existing slot | TC-SLOT-01 slot exists (2026-12-15 10:00–11:00) | Same steps as TC-SLOT-01 with overlapping times | Date 2026-12-15, 10:30–11:30, Room 102 | Rejected (HTTP 400); red error box about overlapping slot | 400 "This slot overlaps with an existing slot from 10:00 to 11:00 on 2026-12-15" (verified via API) | Pass |
 | TC-SLOT-07 | Create a slot with an impossible month (exposes **BUG-01**) | Logged in as lecturer (token) | Send request through DevTools console (Appendix A, script 1) | Date 2027-13-01, 10:00–11:00 | Rejected (HTTP 400); invalid date | 201 "Availability slot created successfully"; slot saved with invalid date 2027-13-01 | Fail (BUG-01 #2) |
@@ -94,7 +94,7 @@ Status legend: **Pass** = actual result matches expected result; **Fail** = it d
 | Role-based access | 3 | 3 | 0 |
 | **Total** | **25** | **22** | **3** |
 
-Failed test cases are linked to the defects logged in GitHub Issues (BUG-01 #2, BUG-02 #3, BUG-03 #4).
+Failed test cases are linked to the defects logged in GitHub Issues (BUG-01 #2, BUG-02 #3, BUG-03 #4). Two further defects were found during execution of passing test cases: BUG-06 #8 (TC-BOOK-02) and BUG-07 #9 (TC-SLOT-04).
 
 ## Appendix A – DevTools console scripts (for TC-AUTH-06, TC-SLOT-07, TC-SLOT-08)
 
