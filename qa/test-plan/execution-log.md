@@ -2,7 +2,7 @@
 
 - **Executed:** 2026-11-24, 02:25 (Asia/Colombo) against `http://localhost:5000/api`
 - **Environment:** Windows 11, Node.js v26.5.0, in-memory MongoDB with seeded demo data
-- **Method:** AI-assisted run: the API requests below were sent by a Node.js script; selected UI behaviour was checked in a browser (see "UI checks")
+- **Method:** the API requests below were sent by a Node.js script; selected UI behaviour was checked in a browser (see "UI checks")
 - Tokens are redacted. Timestamps are UTC. Cases are listed in execution order.
 - An earlier attempt stopped at TC-AUTH-03 with ECONNRESET when the `node --watch` backend process restarted; its in-memory database was recreated. The complete run below started afterwards from freshly seeded data.
 
