@@ -33,3 +33,10 @@ jobs:
 
       - name: BDD tests
         run: npm run test:bdd
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
