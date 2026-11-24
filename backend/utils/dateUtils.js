@@ -14,6 +14,22 @@ export const getSlotDateTime = (dateStr, timeStr) => {
 };
 
 /**
+ * Returns true only if dateStr is a YYYY-MM-DD string that exists on the calendar.
+ * Rejects impossible months (2027-13-01) and days that roll over (2027-02-31 -> 3 March).
+ * Fixes BUG-01 (#2) and BUG-02 (#3).
+ */
+export const isValidCalendarDate = (dateStr) => {
+  if (typeof dateStr !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return false;
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return (
+    date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day
+  );
+};
+
+/**
  * Checks whether the slot's start time is in the past compared to current time
  */
 export const isSlotInPast = (dateStr, timeStr) => {

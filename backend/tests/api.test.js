@@ -66,10 +66,14 @@ describe('Create availability slot', () => {
     expect(res.status).toBe(400);
   });
 
-  // KNOWN BUG: month 13 is accepted. test.failing passes while the bug exists.
-  // After the bug is fixed, change test.failing to test.
-  test.failing('BUG-01: impossible date 2027-13-01 should be rejected (400)', async () => {
+  // Regression tests for BUG-01 (#2) and BUG-02 (#3) - fixed by isValidCalendarDate()
+  test('BUG-01: impossible date 2027-13-01 should be rejected (400)', async () => {
     const res = await createSlot({ date: '2027-13-01', startTime: '10:00', endTime: '10:30', location: 'Room 304' });
+    expect(res.status).toBe(400);
+  });
+
+  test('BUG-02: non-existent date 2027-02-31 should be rejected (400)', async () => {
+    const res = await createSlot({ date: '2027-02-31', startTime: '10:00', endTime: '10:30', location: 'Room 304' });
     expect(res.status).toBe(400);
   });
 });
