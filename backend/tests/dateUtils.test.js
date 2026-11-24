@@ -4,6 +4,7 @@ import {
   isValidTimeRange,
   isSlotInPast,
   isPastCancellationDeadline,
+  isValidCalendarDate,
 } from '../utils/dateUtils.js';
 
 // Returns [YYYY-MM-DD, HH:mm] in Asia/Colombo for (now + offsetMinutes)
@@ -45,6 +46,24 @@ describe('isSlotInPast - BVA around "now"', () => {
   test('1 minute ago is past', () => expect(isSlotInPast(...colombo(-1))).toBe(true));
   test('1 minute ahead is not past', () => expect(isSlotInPast(...colombo(1))).toBe(false));
   test('yesterday is past', () => expect(isSlotInPast(...colombo(-24 * 60))).toBe(true));
+});
+
+describe('isValidCalendarDate - BVA on month and day (BUG-01, BUG-02)', () => {
+  test.each([
+    ['2027-01-01', true],  // month min boundary
+    ['2027-12-31', true],  // month max boundary, last day of year
+    ['2027-00-10', false], // month below min
+    ['2027-13-01', false], // month above max (BUG-01)
+    ['2027-02-28', true],  // last day of Feb (non-leap year)
+    ['2027-02-29', false], // Feb 29 in a non-leap year
+    ['2028-02-29', true],  // Feb 29 in a leap year
+    ['2027-02-31', false], // rolls over to March (BUG-02)
+    ['2027-04-31', false], // April has 30 days
+    ['2027-05-00', false], // day below min
+    ['2027-5-1', false],   // wrong format
+  ])('%s -> %s', (date, expected) => {
+    expect(isValidCalendarDate(date)).toBe(expected);
+  });
 });
 
 describe('isPastCancellationDeadline - BVA (deadline = 2 hours)', () => {

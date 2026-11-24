@@ -3,6 +3,7 @@ import Appointment from '../models/Appointment.js';
 import {
   isSlotInPast,
   isValidTimeRange,
+  isValidCalendarDate,
   doTimesOverlap,
 } from '../utils/dateUtils.js';
 
@@ -53,6 +54,14 @@ export const createAvailability = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: 'Date, start time, end time, and location are required',
+      });
+    }
+
+    // Rule: The date must exist on the calendar (BUG-01 / BUG-02)
+    if (!isValidCalendarDate(date)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid date: the date does not exist',
       });
     }
 
@@ -142,6 +151,14 @@ export const updateAvailability = async (req, res, next) => {
     const targetDate = date || slot.date;
     const targetStart = startTime || slot.startTime;
     const targetEnd = endTime || slot.endTime;
+
+    // Rule: The new date must exist on the calendar (BUG-01 / BUG-02)
+    if (date && !isValidCalendarDate(date)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid date: the date does not exist',
+      });
+    }
 
     // Validate time range if times changed
     if (startTime || endTime) {
