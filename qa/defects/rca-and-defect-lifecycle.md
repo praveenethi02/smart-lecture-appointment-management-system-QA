@@ -89,7 +89,7 @@ The project uses GitHub Issues with `status:` labels to track the lifecycle.
 | **Fixed** | Fix made on branch `fix/bug-01-invalid-date` (commit `8006dd3`). All 44 unit and API tests pass locally. PR [#13](https://github.com/praveenethi02/smart-lecture-appointment-management-system-QA/pull/13) opened with "Fixes #2". Label changed to `status: fixed`. | [DEF-04](screenshots/DEF-04-bug01-fix-tests-pass.png), [DEF-05](screenshots/DEF-05-bug01-pr13-opened.png) |
 | **CI** | GitHub Actions *Backend Tests* passed. SonarCloud Quality Gate passed (0 new issues, 80% coverage on new code). | [DEF-06](screenshots/DEF-06-bug01-pr13-ci-passed.png) |
 | **Verified** | Retest on the fixed backend: `2027-13-01` → **400**, `2027-02-31` → **400**, a valid date → **201**. Newman known-bugs collection: BUG-01 and BUG-02 now pass. Label changed to `status: verified`, with an evidence comment. | [DEF-07](screenshots/DEF-07-bug01-verified-retest.png), [DEF-08](screenshots/DEF-08-bug01-verified-newman.png), [DEF-09](screenshots/DEF-09-bug01-verified-newman-summary.png), [DEF-10](screenshots/DEF-10-bug01-status-verified.png), [DEF-11](screenshots/DEF-11-bug01-verified-comment.png) |
-| **Closed** | PR #13 is merged into `main` after team review. GitHub closes issue #2 automatically because of "Fixes #2". | Pending review |
+| **Closed** | PR #13 was approved and merged into `main`. GitHub closed issue #2 automatically as completed, because the PR description contains "Fixes #2". | [DEF-12](screenshots/DEF-12-bug01-closed.png), [DEF-13](screenshots/DEF-13-bug01-closed-timeline.png) |
 
 ### Retest result summary
 
