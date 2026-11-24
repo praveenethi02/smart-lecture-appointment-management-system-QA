@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "Smart Lecturer QA - Known Bugs",
+    "description": "Regression checks for logged GitHub Issues. Each request asserts the expected (correct) behaviour, so it fails while the bug is open and passes once the fix is merged.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "lecturerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bugStart",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bugEnd",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Setup: login as lecturer",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+              "const body = pm.response.json();",
+              "pm.test(\"Response contains a JWT token\", () => pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+              "pm.test(\"User role is lecturer\", () => pm.expect(body.user.role).to.eql(\"lecturer\"));",
+              "pm.test(\"Password hash is not returned\", () => pm.expect(body.user).to.not.have.property(\"password\"));",
+              "pm.collectionVariables.set(\"lecturerToken\", body.token);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"dr.kamal@apex.edu\",\n  \"password\": \"Lecturer@123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "BUG-01 (#2) Impossible month 2027-13-01 -> expect 400",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Random start minute (00:00-22:59) so earlier runs never cause a 400 overlap error",
+              "const start = Math.floor(Math.random() * 23 * 60);",
+              "const pad = (n) => String(n).padStart(2, \"0\");",
+              "const fmt = (m) => pad(Math.floor(m / 60)) + \":\" + pad(m % 60);",
+              "pm.collectionVariables.set(\"bugStart\", fmt(start));",
+              "pm.collectionVariables.set(\"bugEnd\", fmt(start + 30));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"BUG-01: impossible date is rejected with 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/availability",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "availability"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{lecturerToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2027-13-01\",\n  \"startTime\": \"{{bugStart}}\",\n  \"endTime\": \"{{bugEnd}}\",\n  \"location\": \"Room 304\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "BUG-02 (#3) Non-existent day 2027-02-31 -> expect 400",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Random start minute (00:00-22:59) so earlier runs never cause a 400 overlap error",
+              "const start = Math.floor(Math.random() * 23 * 60);",
+              "const pad = (n) => String(n).padStart(2, \"0\");",
+              "const fmt = (m) => pad(Math.floor(m / 60)) + \":\" + pad(m % 60);",
+              "pm.collectionVariables.set(\"bugStart\", fmt(start));",
+              "pm.collectionVariables.set(\"bugEnd\", fmt(start + 30));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"BUG-02: non-existent date is rejected with 400\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/availability",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "availability"
+          ]
+        },
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{lecturerToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2027-02-31\",\n  \"startTime\": \"{{bugStart}}\",\n  \"endTime\": \"{{bugEnd}}\",\n  \"location\": \"Room 304\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "BUG-03 (#4) NoSQL injection payload on login -> expect 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"BUG-03: injection payload is rejected with 400 (not 500)\", () => pm.response.to.have.status(400));",
+              "  pm.test(\"BUG-03: internal error message is not leaked\", () =>",
+              "    pm.expect(pm.response.text()).to.not.include(\"is not a function\"));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "auth": {
+          "type": "noauth"
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": {\n    \"$ne\": null\n  },\n  \"password\": \"x\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}
