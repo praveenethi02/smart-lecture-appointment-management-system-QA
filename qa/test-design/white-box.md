@@ -127,10 +127,10 @@ export const createAvailability = async (req, res, next) => {
 ### 2.2 Control Flow Graph (CFG) Description & Diagram
 
 #### Graph Description
-- **Nodes ($N = 13$):** Basic blocks containing sequential statements without internal branching.
-- **Edges ($E = 17$):** Directed control transfers between basic blocks.
+- **Nodes ($N = 14$):** 13 basic blocks (Nodes 1 through 13) plus 1 terminal `Exit` node representing program completion.
+- **Edges ($E = 18$):** 18 directed control transfers (13 internal transitions between basic blocks + 5 exit connections to the terminal `Exit` node).
 - **Decision Nodes (Predicates):** Nodes 2, 4, 6, 9, 10.
-- **Exit Nodes:** Nodes 3, 5, 7, 11 (error returns) and Node 13 (successful return), all joining at common program termination.
+- **Exit Nodes:** Nodes 3, 5, 7, 11 (error returns) and Node 13 (successful return), all joining at common program termination (`Exit`).
 
 ```mermaid
 flowchart TD
@@ -173,12 +173,14 @@ We compute and verify $V(G)$ for `createAvailability` using **three independent 
 #### Method 1: Edge and Node Formula
 $$V(G) = E - N + 2P$$
 Where:
-- $E$ is the number of directed edges in the connected CFG: **$17$**
-  - Directed edges: $(1 \to 2)$, $(2 \to 3)$, $(2 \to 4)$, $(4 \to 5)$, $(4 \to 6)$, $(6 \to 7)$, $(6 \to 8)$, $(8 \to 9)$, $(9 \to 10)$, $(9 \to 12)$, $(10 \to 11)$, $(10 \to 9)$, $(12 \to 13)$, and the 4 early-exit connections to terminal exit $(3 \to \text{Exit})$, $(5 \to \text{Exit})$, $(7 \to \text{Exit})$, $(11 \to \text{Exit})$, $(13 \to \text{Exit})$.
-- $N$ is the number of basic block nodes: **$13$** (Nodes 1 through 13).
+- $E$ is the total number of directed edges in the connected CFG: **$18$**
+  - Directed edges (18 total):
+    - 13 internal transitions: $(1 \to 2)$, $(2 \to 3)$, $(2 \to 4)$, $(4 \to 5)$, $(4 \to 6)$, $(6 \to 7)$, $(6 \to 8)$, $(8 \to 9)$, $(9 \to 10)$, $(9 \to 12)$, $(10 \to 11)$, $(10 \to 9)$, $(12 \to 13)$
+    - 5 exit connections to the terminal exit node: $(3 \to \text{Exit})$, $(5 \to \text{Exit})$, $(7 \to \text{Exit})$, $(11 \to \text{Exit})$, and $(13 \to \text{Exit})$.
+- $N$ is the total number of nodes in the graph: **$14$** (Basic block Nodes 1 through 13 plus the terminal `Exit` node).
 - $P$ is the number of connected components: **$1$**.
 
-$$V(G) = 17 - 13 + 2(1) = 4 + 2 = \mathbf{6}$$
+$$V(G) = 18 - 14 + 2(1) = 4 + 2 = \mathbf{6}$$
 
 ---
 

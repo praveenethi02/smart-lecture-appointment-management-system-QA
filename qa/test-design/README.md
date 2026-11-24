@@ -71,12 +71,12 @@ Systematic 6-point boundary testing was executed across continuous and ordinal p
 ## 4. Summary of White-Box Testing (Section 3.4) — [Read `white-box.md`](./white-box.md)
 
 ### 4.1 Control Flow Analysis for `createAvailability`
-- Decomposed the controller into 13 basic blocks ($N = 13$) and 17 control edges ($E = 17$).
+- Decomposed the controller into 13 basic blocks plus 1 terminal Exit node ($N = 14$) and 18 directed control edges ($E = 18$: 13 internal transitions + 5 exit connections).
 - Identified 5 decision points (Mandatory fields guard, duration check, past date check, loop condition, and overlap check).
 
 ### 4.2 Cyclomatic Complexity Proven Three Ways
 McCabe's Cyclomatic Complexity was verified through three independent mathematical derivations:
-1. **Edge-Node Formula:** $V(G) = E - N + 2P = 17 - 13 + 2(1) = \mathbf{6}$
+1. **Edge-Node Formula:** $V(G) = E - N + 2P = 18 - 14 + 2(1) = \mathbf{6}$
 2. **Predicate Node Formula:** $V(G) = P_{\text{decision}} + 1 = 5 + 1 = \mathbf{6}$
 3. **Planar Regions Formula:** $V(G) = R = 5 \text{ enclosed regions} + 1 \text{ exterior region} = \mathbf{6}$
 *(Note: Compound condition expansion at binary short-circuit level yields $V(G) = 9$.)*
