@@ -2,7 +2,7 @@
 
 Our team treated testing as a continuous activity built into the development workflow rather than a separate phase at the end. This section reflects on the Agile and DevOps practices we applied and what we learned from them.
 
-**Feature branches and pull requests.** Our testing work was done on separate branches (for example `testing`, `sonarcloud`, `member1-test-plan`) and proposed through pull requests. The automated checks passed before each of the merged pull requests (PR #1, PR #7 and PR #10) went into `main`. This kept `main` stable and gave us a clear history of who changed what and why. There were gaps: one small configuration commit went directly to `main`, branch protection was not enabled, and those three pull requests were merged without a completed review. Enabling branch protection with a required review is an improvement for the next iteration.
+**Feature branches and pull requests.** Our testing work was done on separate branches (for example `testing`, `sonarcloud`, `member1-test-plan`) and proposed through pull requests. The automated checks passed before each of the merged pull requests (PR #1, PR #7, PR #10 and PR #11) went into `main`. This kept `main` stable and gave us a clear history of who changed what and why. There were gaps: one small configuration commit went directly to `main`, branch protection was not enabled, and those four pull requests were merged without a completed review. Enabling branch protection with a required review is an improvement for the next iteration.
 
 **Continuous Integration on every pull request.** A GitHub Actions workflow (`.github/workflows/test.yml`) runs the Jest unit tests, Supertest API tests and Cucumber BDD scenarios on every pull request and every push to `main`, on a clean `ubuntu-latest` runner. This removed the "it works on my machine" problem, because the CI runner became the single reference environment for the whole team.
 
@@ -16,10 +16,10 @@ Our team treated testing as a continuous activity built into the development wor
 
 **Automated regression tests.** Because all automated tests run on every change, any fix (for example, the fix for BUG-01) is automatically checked against all existing behaviour. The known bug was first captured as a `test.failing` test, so the suite documents the defect and will alert the team once it is fixed.
 
-**Issue tracking.** All defects were logged in GitHub Issues with labels for type (`bug`, `security`), status (`new → assigned → fixed → verified`) and severity. Linking pull requests to issues (for example "Fixes #2") connects each code change to the defect it resolves and closes the issue automatically on merge, giving full traceability.
+**Issue tracking.** All defects were logged in GitHub Issues with labels for type (`bug`, `security`), status (planned lifecycle `new → assigned → fixed → verified`) and severity. At the time of writing, all seven defects (BUG-01 to BUG-07) are open with `status: new`. When a fix is made, linking its pull request to the issue (for example "Fixes #2") will connect the code change to the defect and close the issue automatically on merge, giving full traceability.
 
 **Lessons learned.**
-- Automation pays off immediately: both CI failures were caught within minutes and fixed the same day.
+- Automation pays off immediately: the CI failure and the failed Quality Gate were caught within minutes and fixed the same day.
 - Quality Gates should be enforced through branch protection so that they block merges; otherwise warnings can be ignored.
 - Coverage is uneven – the backend has 69.7% branch coverage but the frontend has no automated tests, giving 16.2% overall. Adding frontend component tests is our main improvement for the next iteration.
 - Manual exploratory and black-box testing are still needed alongside automation, especially for usability and for business rules the automated suite does not yet cover.

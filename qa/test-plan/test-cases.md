@@ -15,7 +15,7 @@
 
 | Item | Configuration |
 |---|---|
-| Operating system | Windows 10 / 11 (64-bit) |
+| Operating system | Windows 11 (64-bit) |
 | Browser | Google Chrome (headless, for UI runs and screenshots) |
 | Runtime | Node.js 26.5.0 (local execution), npm |
 | Backend | Express REST API on `http://localhost:5000` |
