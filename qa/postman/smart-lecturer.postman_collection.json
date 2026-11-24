@@ -1,0 +1,805 @@
+{
+  "info": {
+    "name": "Smart Lecturer QA",
+    "description": "API test automation for the Smart Lecturer Appointment Management System. Run the requests in order (Collection Runner or Newman). Each request asserts status code and response body.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "studentToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "student2Token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "lecturerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "slotDate",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "slotStart",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "slotEnd",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "slotId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "appointmentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health",
+      "item": [
+        {
+          "name": "TC-API-01 Health check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "      pm.test(\"Service reports healthy\", () => pm.expect(pm.response.json().status).to.eql(\"healthy\"));",
+                  "      pm.test(\"Response time below 1000 ms\", () => pm.expect(pm.response.responseTime).to.be.below(1000));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "TC-API-02 Login as student (Kasun)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Response contains a JWT token\", () => pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"User role is student\", () => pm.expect(body.user.role).to.eql(\"student\"));",
+                  "pm.test(\"Password hash is not returned\", () => pm.expect(body.user).to.not.have.property(\"password\"));",
+                  "pm.collectionVariables.set(\"studentToken\", body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"kasun@student.apex.edu\",\n  \"password\": \"Student@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-03 Login as student 2 (Dinithi)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Response contains a JWT token\", () => pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"User role is student\", () => pm.expect(body.user.role).to.eql(\"student\"));",
+                  "pm.test(\"Password hash is not returned\", () => pm.expect(body.user).to.not.have.property(\"password\"));",
+                  "pm.collectionVariables.set(\"student2Token\", body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dinithi@student.apex.edu\",\n  \"password\": \"Student@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-04 Login as lecturer (Dr. Kamal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Response contains a JWT token\", () => pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"User role is lecturer\", () => pm.expect(body.user.role).to.eql(\"lecturer\"));",
+                  "pm.test(\"Password hash is not returned\", () => pm.expect(body.user).to.not.have.property(\"password\"));",
+                  "pm.collectionVariables.set(\"lecturerToken\", body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dr.kamal@apex.edu\",\n  \"password\": \"Lecturer@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-05 Login as admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Response contains a JWT token\", () => pm.expect(body.token).to.be.a(\"string\").and.not.empty);",
+                  "pm.test(\"User role is admin\", () => pm.expect(body.user.role).to.eql(\"admin\"));",
+                  "pm.test(\"Password hash is not returned\", () => pm.expect(body.user).to.not.have.property(\"password\"));",
+                  "pm.collectionVariables.set(\"adminToken\", body.token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@apex.edu\",\n  \"password\": \"Admin@123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-06 Login with wrong password -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => pm.response.to.have.status(401));",
+                  "      const body = pm.response.json();",
+                  "      pm.test(\"success is false\", () => pm.expect(body.success).to.eql(false));",
+                  "      pm.test(\"No token is issued\", () => pm.expect(body).to.not.have.property(\"token\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"kasun@student.apex.edu\",\n  \"password\": \"WrongPass1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Availability & Booking",
+      "item": [
+        {
+          "name": "TC-API-07 Lecturer creates a future slot -> 201",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Random future date + hour so re-runs never overlap an existing slot",
+                  "      const days = 30 + Math.floor(Math.random() * 300);",
+                  "      const date = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);",
+                  "      const hour = 8 + Math.floor(Math.random() * 9);",
+                  "      const minute = Math.random() < 0.5 ? \"00\" : \"30\";",
+                  "      const pad = (n) => String(n).padStart(2, \"0\");",
+                  "      pm.collectionVariables.set(\"slotDate\", date);",
+                  "      pm.collectionVariables.set(\"slotStart\", pad(hour) + \":\" + minute);",
+                  "      pm.collectionVariables.set(\"slotEnd\", pad(hour) + \":\" + (minute === \"00\" ? \"20\" : \"50\"));"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+                  "      const body = pm.response.json();",
+                  "      pm.test(\"success is true\", () => pm.expect(body.success).to.eql(true));",
+                  "      pm.test(\"Slot is available with the requested date\", () => {",
+                  "        pm.expect(body.slot.status).to.eql(\"available\");",
+                  "        pm.expect(body.slot.date).to.eql(pm.collectionVariables.get(\"slotDate\"));",
+                  "      });",
+                  "      pm.collectionVariables.set(\"slotId\", body.slot._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/availability",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "availability"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lecturerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{slotDate}}\",\n  \"startTime\": \"{{slotStart}}\",\n  \"endTime\": \"{{slotEnd}}\",\n  \"location\": \"Room 304\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-08 Student books the slot -> 201",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 201\", () => pm.response.to.have.status(201));",
+                  "      const body = pm.response.json();",
+                  "      pm.test(\"success is true\", () => pm.expect(body.success).to.eql(true));",
+                  "      pm.test(\"Appointment has an id and is not cancelled\", () => {",
+                  "        pm.expect(body.appointment._id).to.be.a(\"string\");",
+                  "        pm.expect(body.appointment.status).to.not.eql(\"cancelled\");",
+                  "      });",
+                  "      pm.collectionVariables.set(\"appointmentId\", body.appointment._id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availabilityId\": \"{{slotId}}\",\n  \"reason\": \"Final year project review\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-09 Second student books the same slot -> 409",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 409 (no double booking)\", () => pm.response.to.have.status(409));",
+                  "      pm.test(\"success is false\", () => pm.expect(pm.response.json().success).to.eql(false));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{student2Token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availabilityId\": \"{{slotId}}\",\n  \"reason\": \"Thesis discussion\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Access control (OWASP A01)",
+      "item": [
+        {
+          "name": "TC-API-10 Student opens admin dashboard -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", () => pm.response.to.have.status(403));",
+                  "      pm.test(\"success is false\", () => pm.expect(pm.response.json().success).to.eql(false));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-API-11 Lecturer tries to book a slot -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{lecturerToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"availabilityId\": \"{{slotId}}\",\n  \"reason\": \"Lecturer should not book\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "TC-API-12 Student 2 opens Student 1's appointment -> 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 403 (no IDOR)\", () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/{{appointmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointmentId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{student2Token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "TC-API-13 Request without token -> 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/my",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "my"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "TC-API-14 Admin opens dashboard -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "      pm.test(\"success is true\", () => pm.expect(pm.response.json().success).to.eql(true));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/dashboard",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "dashboard"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Cancellation",
+      "item": [
+        {
+          "name": "TC-API-15 Student cancels own appointment -> 200",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "      const body = pm.response.json();",
+                  "      pm.test(\"success is true\", () => pm.expect(body.success).to.eql(true));",
+                  "      pm.test(\"Appointment status is cancelled\", () => pm.expect(body.appointment.status).to.eql(\"cancelled\"));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/appointments/{{appointmentId}}/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "appointments",
+                "{{appointmentId}}",
+                "cancel"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Timetable clash\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
