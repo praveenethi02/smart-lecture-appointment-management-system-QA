@@ -52,9 +52,9 @@ My core deliverables encompassed:
 ## 3. Technical Reflection on White-Box Testing & Structural Analysis
 
 ### 3.1 Control Flow Graph & Cyclomatic Complexity
-- **Graph Construction:** Decomposing `createAvailability` into basic blocks (Nodes 1 to 13) and control edges ($E = 17$) provided clear visualization of all decision branches and the inner loop iteration ($9 \to 10 \to 9$).
+- **Graph Construction:** Decomposing `createAvailability` into basic blocks (Nodes 1 to 13 plus the terminal Exit node, $N = 14$) and directed control edges ($E = 18$: 13 internal transitions + 5 exit connections) provided clear visualization of all decision branches and the inner loop iteration ($9 \to 10 \to 9$).
 - **Triple Verification of $V(G)$:**
-  - Method 1 (Edges & Nodes): $V(G) = E - N + 2P = 17 - 13 + 2(1) = \mathbf{6}$
+  - Method 1 (Edges & Nodes): $V(G) = E - N + 2P = 18 - 14 + 2(1) = \mathbf{6}$
   - Method 2 (Predicate Nodes): $V(G) = P_{\text{decision}} + 1 = 5 + 1 = \mathbf{6}$
   - Method 3 (Planar Regions): $V(G) = R = 5 \text{ enclosed} + 1 \text{ exterior} = \mathbf{6}$
   All three formulas converged on $V(G) = 6$, confirming structural integrity.
